@@ -1,0 +1,7 @@
+{
+    "@@locale": "en",
+    "appName": "Breedy",
+    "@appName": {
+        "description": "Text shown in the AppBar of the Home Page"
+    }
+}

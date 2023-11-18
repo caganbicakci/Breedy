@@ -1,0 +1,37 @@
+name: breedy
+description: Dog Breed App for AppNation project.
+version: 1.0.0+1
+publish_to: none
+
+environment:
+  sdk: ">=3.1.0 <4.0.0"
+
+dependencies:
+  auto_route: ^7.3.2
+  bloc: ^8.1.2
+  flutter:
+    sdk: flutter
+  flutter_bloc: ^8.1.3
+  flutter_localizations:
+    sdk: flutter
+  flutter_svg: ^2.0.9
+  intl: ^0.18.0
+
+dev_dependencies:
+  auto_route_generator: ^7.3.2
+  bloc_test: ^9.1.4
+  build_runner: ^2.4.6
+  flutter_test:
+    sdk: flutter
+  mocktail: ^1.0.0
+  very_good_analysis: ^5.1.0
+
+flutter:
+  uses-material-design: true
+  generate: true
+
+  assets:
+    - assets/icons/house.svg
+    - assets/icons/house_active.svg
+    - assets/icons/wrench.svg
+    - assets/icons/wrench_active.svg
