@@ -35,3 +35,10 @@ flutter:
     - assets/icons/house_active.svg
     - assets/icons/wrench.svg
     - assets/icons/wrench_active.svg
+    - assets/settings/help.svg
+    - assets/settings/rate.svg
+    - assets/settings/share.svg
+    - assets/settings/terms.svg
+    - assets/settings/privacy.svg
+    - assets/settings/version.svg
+    - assets/settings/arrow.svg
