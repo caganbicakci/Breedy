@@ -1,6 +1,11 @@
 class Breed {
-  Breed({required this.breedName, required this.bredeImageUrl});
+  Breed({
+    required this.breedName,
+    this.breedImageUrl,
+    this.subBreeds,
+  });
 
   String breedName;
-  String bredeImageUrl;
+  String? breedImageUrl;
+  List<String>? subBreeds;
 }

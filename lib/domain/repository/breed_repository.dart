@@ -5,51 +5,34 @@ import 'package:breedy/domain/models/breed_list.dart';
 import 'package:http/http.dart' as http;
 
 class BreedRepository {
-  final _apiUrl = 'https://dog.ceo/api/breeds/list/all';
-  final List<String> listOfBreed = List.empty();
+  Future<List<Breed>?> fetchAllBreeds() async {
+    const allBreedsEndpoint = 'https://dog.ceo/api/breeds/list/all';
+    final response = await http.get(Uri.parse(allBreedsEndpoint));
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body) as Map;
+      final breedListResponse = BreedListResponse.fromJson(data);
 
-  Future<List<String>?> getAllBreedsFromApi() async {
-    try {
-      final response = await http.get(Uri.parse(_apiUrl));
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body) as Map;
-        final breeds = BreedListResponse.fromJson(data);
-
-        if (breeds.status == 'success') {
-          return breeds.message.keys.toList();
-        } else {
-          return null;
-        }
-      }
-    } catch (e) {
-      print(e);
+      final listOfBreeds = breedListResponse.message.entries
+          .map((MapEntry<String, dynamic> entry) {
+        final breedName = entry.key;
+        final subBreeds = List<String>.from(entry.value as List<dynamic>);
+        return Breed(breedName: breedName, subBreeds: subBreeds);
+      }).toList();
+      return listOfBreeds;
+    } else {
+      return null;
     }
   }
 
-  Future<http.Response> getBreedImage(String breed) async {
-    return http
-        .get(Uri.parse('https://dog.ceo/api/breed/$breed/images/random'));
-  }
-
-  Future<List<Breed>?> getBreeds() async {
-    final breedList = List<Breed>.empty(growable: true);
-    try {
-      final allBreeds = await getAllBreedsFromApi();
-      if (allBreeds != null) {
-        for (final breed in allBreeds.sublist(0, 4)) {
-          final imageResponse = await getBreedImage(breed);
-          if (imageResponse.statusCode == 200) {
-            final imageData = json.decode(imageResponse.body);
-            final breedImage = BreedImage.fromJson(imageData);
-            final breedImageUrl = breedImage.message;
-            breedList
-                .add(Breed(breedName: breed, bredeImageUrl: breedImageUrl));
-          }
-        }
-        return breedList.sublist(0, 4);
-      }
-    } catch (e) {
-      print(e);
+  Future<BreedImage?> getBreedImage(String breedName) async {
+    final imageEndpoint = 'https://dog.ceo/api/breed/$breedName/images/random';
+    final response = await http.get(Uri.parse(imageEndpoint));
+    if (response.statusCode == 200) {
+      final imageData = json.decode(response.body);
+      final breedImage = BreedImage.fromJson(imageData);
+      return breedImage;
+    } else {
+      return null;
     }
   }
 }
