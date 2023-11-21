@@ -10,15 +10,16 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   AppBloc() : super(AppInitial()) {
     on<BreedsLoadEvent>((event, emit) async {
       emit(BreedsLoading());
-      final breeds = await _breedRepository.fetchAllBreeds();
+      final breedList = await _breedRepository.fetchAllBreeds();
 
-      if (breeds != null) {
-        for (final breed in breeds) {
-          await getBreedImage(breed.breedName).then((value) {
-            breed.breedImageUrl = value;
-          });
+      if (breedList != null) {
+        for (final breed in breedList) {
+          final breedImageUrl = await getBreedImage(breed.breedName);
+          if (breedImageUrl != null) {
+            breed.breedImageUrl = breedImageUrl;
+          }
         }
-        emit(BreedsLoaded(breeds));
+        emit(BreedsLoaded(breedList));
       }
     });
   }

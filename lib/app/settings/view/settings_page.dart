@@ -1,5 +1,7 @@
 import 'dart:io' show Platform;
 
+import 'package:breedy/app/constants/asset_constants.dart';
+import 'package:breedy/app/constants/theme_constants.dart';
 import 'package:breedy/app/settings/bloc/settings_bloc.dart';
 import 'package:breedy/l10n/l10n.dart';
 import 'package:flutter/material.dart';
@@ -30,27 +32,31 @@ class SettingsView extends StatelessWidget {
           context.read<SettingsBloc>().add(SettingsEvent());
         }
         if (state is SettingsReady) {
-          return ListView.separated(
-            separatorBuilder: (_, index) {
-              return const Divider(
-                color: Color(0xffE5E5EA),
-                thickness: 2,
-                height: 2,
-              );
-            },
-            itemCount: state.settingsList.length,
-            itemBuilder: (context, index) {
-              return ListTile(
-                title: Text(state.settingsList[index].title),
-                leading: SvgPicture.asset(state.settingsList[index].iconLink),
-                trailing: state.settingsList[index].isInfo == true
-                    ? Text(osVersion)
-                    : SvgPicture.asset('assets/settings/arrow.svg'),
-              );
-            },
-          );
+          return buildSettingsListView(state);
         }
         return Container();
+      },
+    );
+  }
+
+  ListView buildSettingsListView(SettingsReady state) {
+    return ListView.separated(
+      separatorBuilder: (_, index) {
+        return Divider(
+          color: kDividerColor,
+          thickness: kDividerThickness,
+          height: kDividerHeight,
+        );
+      },
+      itemCount: state.settingsList.length,
+      itemBuilder: (context, index) {
+        return ListTile(
+          title: Text(state.settingsList[index].title),
+          leading: SvgPicture.asset(state.settingsList[index].iconLink),
+          trailing: state.settingsList[index].isInfo == true
+              ? Text(osVersion)
+              : SvgPicture.asset(kArrowIconPath),
+        );
       },
     );
   }

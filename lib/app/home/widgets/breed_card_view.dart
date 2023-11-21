@@ -1,9 +1,10 @@
+import 'package:breedy/app/constants/theme_constants.dart';
+import 'package:breedy/app/home/widgets/breed_detail_dialog.dart';
 import 'package:breedy/domain/models/breed.dart';
-import 'package:breedy/domain/repository/breed_repository.dart';
 import 'package:flutter/material.dart';
 
-class BreedCardView extends StatelessWidget {
-  const BreedCardView({required this.breed, super.key});
+class BreedDetailView extends StatelessWidget {
+  const BreedDetailView({required this.breed, super.key});
   final Breed breed;
   @override
   Widget build(BuildContext context) {
@@ -26,7 +27,7 @@ class BreedCardView extends StatelessWidget {
 
   Container buildBreedTitle() {
     return Container(
-      padding: const EdgeInsets.all(8),
+      padding: kDefaultPadding,
       decoration: const BoxDecoration(
         color: Colors.black26,
         borderRadius: BorderRadius.only(
@@ -62,223 +63,8 @@ class BreedCardView extends StatelessWidget {
     showDialog<void>(
       context: context,
       builder: (_) {
-        return AlertDialog(
-          insetPadding: EdgeInsets.zero,
-          contentPadding: EdgeInsets.zero,
-          surfaceTintColor: Colors.white,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-          content: Builder(
-            builder: (context) {
-              final width = MediaQuery.of(context).size.width * 0.8;
-              final height = MediaQuery.of(context).size.height * 0.7;
-              return SizedBox(
-                width: width,
-                height: height,
-                child: Column(
-                  children: [
-                    SizedBox(
-                      height: width,
-                      width: width,
-                      child: buildImageDetail(),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        children: [
-                          buildBreedNameDetail(context),
-                          buildSubBreedDetail(context),
-                          buildGenerateButton(context),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
-        );
+        return BreedDetailDialog(breed: breed);
       },
     );
-  }
-
-  ClipRRect buildImageDetail() {
-    return ClipRRect(
-      borderRadius: const BorderRadius.only(
-        topLeft: Radius.circular(8),
-        topRight: Radius.circular(8),
-      ),
-      child: Image.network(
-        breed.breedImageUrl!,
-        fit: BoxFit.cover,
-      ),
-    );
-  }
-
-  Column buildBreedNameDetail(BuildContext context) {
-    return Column(
-      children: [
-        Text(
-          'Breed',
-          style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                color: const Color(0xff0055D3),
-              ),
-        ),
-        const Divider(),
-        Text(breed.breedName),
-      ],
-    );
-  }
-
-  Column buildSubBreedDetail(BuildContext context) {
-    return Column(
-      children: [
-        Text(
-          'Sub Breed',
-          style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                color: const Color(0xff0055D3),
-              ),
-        ),
-        const Divider(),
-        SizedBox(
-          height: 100,
-          child: ListView(
-            children: breed.subBreeds!.map((String item) {
-              return Center(
-                child: Text(item),
-              );
-            }).toList(),
-          ),
-        ),
-      ],
-    );
-  }
-
-  SizedBox buildGenerateButton(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      height: 50,
-      child: MaterialButton(
-        color: const Color(0xff0085FF),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
-        onPressed: () => showRandomBreedImageDialog(context),
-        child: Text(
-          'Generate',
-          style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                color: Colors.white,
-                fontSize: 16,
-              ),
-        ),
-      ),
-    );
-  }
-
-  void showRandomBreedImageDialog(BuildContext context) {
-    showDialog<void>(
-      context: context,
-      builder: (_) {
-        return AlertDialog(
-          backgroundColor: Colors.white,
-          contentPadding: EdgeInsets.zero,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-          content: Builder(
-            builder: (context) {
-              final width = MediaQuery.of(context).size.width * 0.2;
-              final height = MediaQuery.of(context).size.height * 0.4;
-              return SizedBox(
-                height: height,
-                width: width,
-                child: Column(
-                  children: [
-                    Expanded(
-                      child: ClipRRect(
-                        borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(8),
-                          topRight: Radius.circular(8),
-                        ),
-                        child: FutureBuilder(
-                          future: fetchImage(breed.breedName),
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return const Center(
-                                child: CircularProgressIndicator(),
-                              );
-                            } else if (snapshot.connectionState ==
-                                ConnectionState.done) {
-                              if (snapshot.hasData) {
-                                return Image.network(
-                                  snapshot.data!,
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (context, obj, stack) {
-                                    return const Center(
-                                      child: Icon(Icons.image_not_supported),
-                                    );
-                                  },
-                                );
-                              } else {
-                                return Container();
-                              }
-                            } else {
-                              return Container();
-                            }
-                          },
-                        ),
-                      ),
-                    ),
-                    IconButton(onPressed: () {}, icon: Icon(Icons.close)),
-                  ],
-                ),
-              );
-            },
-          ),
-        );
-      },
-    );
-  }
-
-  // ClipRRect buildBreedClip() {
-  //   return ClipRRect(
-  //     borderRadius: BorderRadius.circular(8),
-  //     child: FutureBuilder(
-  //       future: fetchImage(breed.breedName),
-  //       builder: (context, snapshot) {
-  //         if (snapshot.connectionState == ConnectionState.waiting) {
-  //           return const SizedBox(
-  //             height: 30,
-  //             width: 30,
-  //             child: CircularProgressIndicator(),
-  //           );
-  //         } else if (snapshot.connectionState == ConnectionState.done) {
-  //           if (snapshot.hasData) {
-  //             return Image.network(
-  //               snapshot.data!,
-  //               fit: BoxFit.cover,
-  //               errorBuilder: (context, obj, stack) {
-  //                 return const Center(
-  //                   child: Icon(Icons.image_not_supported),
-  //                 );
-  //               },
-  //             );
-  //           } else {
-  //             return Container();
-  //           }
-  //         } else {
-  //           return Container();
-  //         }
-  //       },
-  //     ),
-  //   );
-  // }
-
-  Future<String> fetchImage(String name) async {
-    final breedRepo = BreedRepository();
-    final result = await breedRepo.getBreedImage(name);
-    if (result != null) {
-      return result.message;
-    } else {
-      return breed.breedImageUrl!;
-    }
   }
 }

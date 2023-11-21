@@ -1,4 +1,6 @@
 import 'package:breedy/app/bloc/app_bloc.dart';
+import 'package:breedy/app/constants/asset_constants.dart';
+import 'package:breedy/app/constants/theme_constants.dart';
 import 'package:breedy/app/home/view/home_page.dart';
 import 'package:breedy/app/settings/settings.dart';
 import 'package:breedy/l10n/l10n.dart';
@@ -15,21 +17,6 @@ class App extends StatefulWidget {
 
 class _AppState extends State<App> {
   final AppBloc _appBloc = AppBloc();
-  int _selectedIndex = 0;
-  final _pages = const [HomePage(), SettingsPage()];
-  final _bottomNavItems = <BottomNavigationBarItem>[
-    BottomNavigationBarItem(
-      icon: SvgPicture.asset('assets/icons/house.svg'),
-      activeIcon: SvgPicture.asset('assets/icons/house_active.svg'),
-      label: 'Home',
-    ),
-    BottomNavigationBarItem(
-      icon: SvgPicture.asset('assets/icons/wrench.svg'),
-      activeIcon: SvgPicture.asset('assets/icons/wrench_active.svg'),
-      label: 'Settings',
-    ),
-  ];
-
   @override
   void initState() {
     _appBloc.add(BreedsLoadEvent());
@@ -38,43 +25,43 @@ class _AppState extends State<App> {
 
   @override
   Widget build(BuildContext context) {
+    final themeData = ThemeData(
+      appBarTheme: AppBarTheme(
+        backgroundColor: Theme.of(context).colorScheme.background,
+      ),
+      useMaterial3: true,
+      bottomNavigationBarTheme:
+          Theme.of(context).bottomNavigationBarTheme.copyWith(
+                selectedItemColor: kPrimaryColor,
+                unselectedItemColor: Colors.black,
+              ),
+    );
     return BlocProvider(
       create: (_) => _appBloc,
       child: MaterialApp(
-        theme: ThemeData(
-          appBarTheme: AppBarTheme(
-            backgroundColor: Theme.of(context).colorScheme.background,
-          ),
-          useMaterial3: true,
-          bottomNavigationBarTheme:
-              Theme.of(context).bottomNavigationBarTheme.copyWith(
-                    selectedItemColor: const Color(0xff0055D3),
-                    unselectedItemColor: Colors.black,
-                  ),
-        ),
+        theme: themeData,
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
-        home: BlocConsumer<AppBloc, AppState>(
-          listener: (context, state) {},
+        home: BlocBuilder<AppBloc, AppState>(
           builder: (context, state) {
             if (state is BreedsLoading) {
               return Scaffold(
                 body: Center(
-                  child: Image.asset('assets/icons/loading.png'),
+                  child: Image.asset(kLoadingIconPath),
                 ),
               );
             } else if (state is BreedsLoaded) {
               return Scaffold(
+                appBar: buildAppBar(context.l10n),
                 bottomNavigationBar: BottomNavigationBar(
-                  items: _bottomNavItems,
-                  currentIndex: _selectedIndex,
+                  items: kBottomNavItems(context),
                   onTap: (int index) {
-                    setState(() {
-                      _selectedIndex = index;
-                    });
+                    if (index == 1) {
+                      showSettingsDialog(context);
+                    }
                   },
                 ),
-                body: _pages[_selectedIndex],
+                body: const HomePage(),
               );
             } else {
               return Container();
@@ -84,5 +71,41 @@ class _AppState extends State<App> {
         debugShowCheckedModeBanner: false,
       ),
     );
+  }
+
+  Future<dynamic> showSettingsDialog(BuildContext context) {
+    return showModalBottomSheet(
+      showDragHandle: true,
+      enableDrag: true,
+      useSafeArea: true,
+      context: context,
+      isScrollControlled: true,
+      builder: (context) => const SettingsPage(),
+    );
+  }
+
+  AppBar buildAppBar(AppLocalizations l10n) {
+    return AppBar(
+      title: Text(
+        l10n.appName,
+        style: const TextStyle(fontWeight: FontWeight.w500),
+      ),
+      centerTitle: true,
+    );
+  }
+
+  List<BottomNavigationBarItem> kBottomNavItems(BuildContext context) {
+    return <BottomNavigationBarItem>[
+      BottomNavigationBarItem(
+        icon: SvgPicture.asset(kHomeIconPath),
+        activeIcon: SvgPicture.asset(kHomeActiveIconPath),
+        label: context.l10n.home,
+      ),
+      BottomNavigationBarItem(
+        icon: SvgPicture.asset(kSettingsIconPath),
+        activeIcon: SvgPicture.asset(kSettingsActiveIconPath),
+        label: context.l10n.settings,
+      ),
+    ];
   }
 }
