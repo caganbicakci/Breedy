@@ -3,5 +3,11 @@
     "appName": "Breedy",
     "@appName": {
         "description": "App bar titleda gözüken uygulama ismi"
-    }
+    },
+    "help" : "Help",
+    "rate" : "Rate Us",
+    "share" : "Share with Friends",
+    "terms" : "Terms of Use",
+    "privacy" : "Privacy Policy",
+    "version" : "OS Version"
 }

@@ -1,7 +1,9 @@
+import 'package:breedy/app/bloc/app_bloc.dart';
 import 'package:breedy/app/home/view/home_page.dart';
 import 'package:breedy/app/settings/settings.dart';
 import 'package:breedy/l10n/l10n.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 
 class App extends StatefulWidget {
@@ -12,6 +14,7 @@ class App extends StatefulWidget {
 }
 
 class _AppState extends State<App> {
+  final AppBloc _appBloc = AppBloc();
   int _selectedIndex = 0;
   final _pages = const [HomePage(), SettingsPage()];
   final _bottomNavItems = <BottomNavigationBarItem>[
@@ -28,34 +31,58 @@ class _AppState extends State<App> {
   ];
 
   @override
+  void initState() {
+    _appBloc.add(BreedsLoadEvent());
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(
-        appBarTheme: AppBarTheme(
-          backgroundColor: Theme.of(context).colorScheme.background,
+    return BlocProvider(
+      create: (_) => _appBloc,
+      child: MaterialApp(
+        theme: ThemeData(
+          appBarTheme: AppBarTheme(
+            backgroundColor: Theme.of(context).colorScheme.background,
+          ),
+          useMaterial3: true,
+          bottomNavigationBarTheme:
+              Theme.of(context).bottomNavigationBarTheme.copyWith(
+                    selectedItemColor: const Color(0xff0055D3),
+                    unselectedItemColor: Colors.black,
+                  ),
         ),
-        useMaterial3: true,
-        bottomNavigationBarTheme:
-            Theme.of(context).bottomNavigationBarTheme.copyWith(
-                  selectedItemColor: const Color(0xff0055D3),
-                  unselectedItemColor: Colors.black,
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: BlocConsumer<AppBloc, AppState>(
+          listener: (context, state) {},
+          builder: (context, state) {
+            if (state is BreedsLoading) {
+              return Scaffold(
+                body: Center(
+                  child: Image.asset('assets/icons/loading.png'),
                 ),
-      ),
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
-      supportedLocales: AppLocalizations.supportedLocales,
-      home: Scaffold(
-        bottomNavigationBar: BottomNavigationBar(
-          items: _bottomNavItems,
-          currentIndex: _selectedIndex,
-          onTap: (int index) {
-            setState(() {
-              _selectedIndex = index;
-            });
+              );
+            } else if (state is BreedsLoaded) {
+              return Scaffold(
+                bottomNavigationBar: BottomNavigationBar(
+                  items: _bottomNavItems,
+                  currentIndex: _selectedIndex,
+                  onTap: (int index) {
+                    setState(() {
+                      _selectedIndex = index;
+                    });
+                  },
+                ),
+                body: _pages[_selectedIndex],
+              );
+            } else {
+              return Container();
+            }
           },
         ),
-        body: _pages[_selectedIndex],
+        debugShowCheckedModeBanner: false,
       ),
-      debugShowCheckedModeBanner: false,
     );
   }
 }

@@ -3,5 +3,11 @@
     "appName": "Breedy",
     "@appName": {
         "description": "Text shown in the AppBar of the Home Page"
-    }
+    },
+    "help" : "Help",
+    "rate" : "Rate Us",
+    "share" : "Share with Friends",
+    "terms" : "Terms of Use",
+    "privacy" : "Privacy Policy",
+    "version" : "OS Version"
 }
