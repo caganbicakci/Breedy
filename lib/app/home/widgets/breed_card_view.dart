@@ -3,8 +3,9 @@ import 'package:breedy/domain/repository/breed_repository.dart';
 import 'package:flutter/material.dart';
 
 class BreedCardView extends StatelessWidget {
-  const BreedCardView({required this.breed, super.key});
+  BreedCardView({required this.breed, super.key});
   final Breed breed;
+  final _breedRepo = BreedRepository();
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -126,10 +127,12 @@ class BreedCardView extends StatelessWidget {
         topLeft: Radius.circular(8),
         topRight: Radius.circular(8),
       ),
-      child: Image.network(
-        breed.breedImageUrl!,
-        fit: BoxFit.cover,
-      ),
+      child: Image.network(breed.breedImageUrl!, fit: BoxFit.cover,
+          errorBuilder: (context, obj, stack) {
+        return const Center(
+          child: Icon(Icons.image_not_supported),
+        );
+      }),
     );
   }
 
@@ -168,6 +171,7 @@ class BreedCardView extends StatelessWidget {
             }).toList(),
           ),
         ),
+        const SizedBox(height: 8),
       ],
     );
   }
@@ -232,7 +236,13 @@ class BreedCardView extends StatelessWidget {
                                 fit: BoxFit.cover,
                                 errorBuilder: (context, obj, stack) {
                                   return const Center(
-                                    child: Icon(Icons.image_not_supported),
+                                    child: Text(
+                                      'Image Not Found!',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        backgroundColor: Colors.black45,
+                                      ),
+                                    ),
                                   );
                                 },
                               );
@@ -269,8 +279,7 @@ class BreedCardView extends StatelessWidget {
   }
 
   Future<String> fetchImage(String name) async {
-    final breedRepo = BreedRepository();
-    final result = await breedRepo.getBreedImage(name);
+    final result = await _breedRepo.getBreedImage(name);
     if (result != null) {
       return result.message;
     } else {
