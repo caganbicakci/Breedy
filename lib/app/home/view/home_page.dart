@@ -1,10 +1,10 @@
 import 'package:breedy/app/bloc/app_bloc.dart';
+import 'package:breedy/app/constants/theme_constants.dart';
 import 'package:breedy/app/home/bloc/home_bloc.dart';
 import 'package:breedy/app/home/widgets/breed_card_view.dart';
 import 'package:breedy/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:logger/logger.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -32,71 +32,66 @@ class _HomeViewState extends State<HomeView> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     return Scaffold(
-      appBar: buildAppBar(l10n),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: buildFloatingActionButton(context),
+      floatingActionButton: buildFloatingActionButton(context, l10n),
       body: BlocBuilder<AppBloc, AppState>(
         builder: (context, state) {
-          if (state is BreedsLoaded) {
-            Logger().i(state);
-            return buildGridView(state);
-          } else if (state is BreedsLoadError) {
-            Logger().e("Error");
-            return Container(
-              child: Text('Error!!'),
-            );
-          } else {
-            return Container();
+          switch (state) {
+            case BreedsLoaded():
+              return buildGridView(state);
+            case BreedsLoadError():
+              return Center(child: Text(l10n.errorMessage));
+            default:
+              return Container();
           }
         },
       ),
     );
   }
 
-  AppBar buildAppBar(AppLocalizations l10n) {
-    return AppBar(
-      title: Text(l10n.appName),
-      centerTitle: true,
-    );
-  }
-
   GridView buildGridView(BreedsLoaded state) {
     return GridView.builder(
-      padding: const EdgeInsets.all(16),
+      padding: kDefaultPadding,
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        mainAxisSpacing: 16,
-        crossAxisSpacing: 16,
-        crossAxisCount: 2,
+        mainAxisSpacing: kGridSpacing,
+        crossAxisSpacing: kGridSpacing,
+        crossAxisCount: kGridAxisCount,
       ),
       itemCount: state.breeds!.length,
       itemBuilder: (_, index) {
-        return BreedCardView(breed: state.breeds![index]);
+        return BreedDetailView(breed: state.breeds![index]);
       },
     );
   }
 
-  Container buildFloatingActionButton(BuildContext context) {
+  Container buildFloatingActionButton(
+    BuildContext context,
+    AppLocalizations l10n,
+  ) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
+      margin: kHorizontalMargin,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: kDefaultCircularRadius,
         color: Colors.white,
-        border: Border.all(width: 2, color: Colors.black12),
+        border: Border.all(
+          width: kSearchBarBorderWidth,
+          color: kSearchBarBorderColor,
+        ),
       ),
       alignment: Alignment.centerLeft,
-      height: 55,
+      height: kSearchBarHeight,
       child: TextFormField(
         controller: _searchEditingController,
         style: Theme.of(context)
             .textTheme
             .bodyMedium!
             .copyWith(color: Colors.black),
-        decoration: const InputDecoration(
+        decoration: InputDecoration(
           border: InputBorder.none,
-          hintText: 'Search',
-          contentPadding: EdgeInsets.all(16),
-          hintStyle: TextStyle(
-            color: Colors.black,
+          hintText: l10n.search,
+          contentPadding: kDefaultPadding,
+          hintStyle: const TextStyle(
+            color: kTextColor,
           ),
         ),
       ),

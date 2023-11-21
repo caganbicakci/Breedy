@@ -9,5 +9,13 @@
     "share" : "Share with Friends",
     "terms" : "Terms of Use",
     "privacy" : "Privacy Policy",
-    "version" : "OS Version"
+    "version" : "OS Version",
+    "errorMessage" : "Something Went Wrong!",
+    "search" : "Search",
+    "home" : "Home",
+    "settings" : "Settings",
+    "generate" : "Generate",
+    "breed" : "Breed",
+    "subBreed" : "Sub Breed",
+    "none" : "No result..."
 }

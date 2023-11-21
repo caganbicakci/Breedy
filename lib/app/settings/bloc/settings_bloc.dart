@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:breedy/app/constants/asset_constants.dart';
 import 'package:breedy/app/settings/model/settings_model.dart';
 import 'package:breedy/l10n/l10n.dart';
 
@@ -10,32 +11,32 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     final settingsList = [
       SettingsModel(
         title: l10n.help,
-        iconLink: 'assets/settings/help.svg',
+        iconLink: kHelpLogoPath,
         isInfo: false,
       ),
       SettingsModel(
         title: l10n.rate,
-        iconLink: 'assets/settings/rate.svg',
+        iconLink: kRateLogoPath,
         isInfo: false,
       ),
       SettingsModel(
         title: l10n.share,
-        iconLink: 'assets/settings/share.svg',
+        iconLink: kShareLogoPath,
         isInfo: false,
       ),
       SettingsModel(
         title: l10n.terms,
-        iconLink: 'assets/settings/terms.svg',
+        iconLink: kTermsLogoPath,
         isInfo: false,
       ),
       SettingsModel(
         title: l10n.privacy,
-        iconLink: 'assets/settings/privacy.svg',
+        iconLink: kPrivacyLogoPath,
         isInfo: false,
       ),
       SettingsModel(
         title: l10n.version,
-        iconLink: 'assets/settings/version.svg',
+        iconLink: kVersionPath,
         isInfo: true,
       ),
     ];
