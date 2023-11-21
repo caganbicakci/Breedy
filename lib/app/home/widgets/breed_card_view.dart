@@ -76,10 +76,29 @@ class BreedCardView extends StatelessWidget {
                 height: height,
                 child: Column(
                   children: [
-                    SizedBox(
-                      height: width,
-                      width: width,
-                      child: buildImageDetail(),
+                    Stack(
+                      children: [
+                        SizedBox(
+                          height: width,
+                          width: width,
+                          child: buildImageDetail(),
+                        ),
+                        Positioned(
+                          top: 8,
+                          right: 8,
+                          child: CircleAvatar(
+                            radius: 16,
+                            backgroundColor: Colors.white,
+                            child: InkWell(
+                              onTap: () => Navigator.pop(context),
+                              child: const Icon(
+                                Icons.close,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                     Padding(
                       padding: const EdgeInsets.all(16),
@@ -140,7 +159,7 @@ class BreedCardView extends StatelessWidget {
         ),
         const Divider(),
         SizedBox(
-          height: 100,
+          height: 75,
           child: ListView(
             children: breed.subBreeds!.map((String item) {
               return Center(
@@ -179,7 +198,8 @@ class BreedCardView extends StatelessWidget {
       context: context,
       builder: (_) {
         return AlertDialog(
-          backgroundColor: Colors.white,
+          backgroundColor: Colors.transparent,
+          elevation: 0,
           contentPadding: EdgeInsets.zero,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           content: Builder(
@@ -193,10 +213,8 @@ class BreedCardView extends StatelessWidget {
                   children: [
                     Expanded(
                       child: ClipRRect(
-                        borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(8),
-                          topRight: Radius.circular(8),
-                        ),
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(8)),
                         child: FutureBuilder(
                           future: fetchImage(breed.breedName),
                           builder: (context, snapshot) {
@@ -205,21 +223,19 @@ class BreedCardView extends StatelessWidget {
                               return const Center(
                                 child: CircularProgressIndicator(),
                               );
-                            } else if (snapshot.connectionState ==
-                                ConnectionState.done) {
-                              if (snapshot.hasData) {
-                                return Image.network(
-                                  snapshot.data!,
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (context, obj, stack) {
-                                    return const Center(
-                                      child: Icon(Icons.image_not_supported),
-                                    );
-                                  },
-                                );
-                              } else {
-                                return Container();
-                              }
+                            }
+                            if (snapshot.connectionState ==
+                                    ConnectionState.done &&
+                                snapshot.hasData) {
+                              return Image.network(
+                                snapshot.data!,
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, obj, stack) {
+                                  return const Center(
+                                    child: Icon(Icons.image_not_supported),
+                                  );
+                                },
+                              );
                             } else {
                               return Container();
                             }
@@ -227,7 +243,21 @@ class BreedCardView extends StatelessWidget {
                         ),
                       ),
                     ),
-                    IconButton(onPressed: () {}, icon: Icon(Icons.close)),
+                    const SizedBox(height: 8),
+                    InkWell(
+                      onTap: () => Navigator.pop(context),
+                      child: Container(
+                        padding: const EdgeInsets.all(4),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(2),
+                          color: Colors.white,
+                        ),
+                        child: const Icon(
+                          Icons.close,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               );
@@ -237,40 +267,6 @@ class BreedCardView extends StatelessWidget {
       },
     );
   }
-
-  // ClipRRect buildBreedClip() {
-  //   return ClipRRect(
-  //     borderRadius: BorderRadius.circular(8),
-  //     child: FutureBuilder(
-  //       future: fetchImage(breed.breedName),
-  //       builder: (context, snapshot) {
-  //         if (snapshot.connectionState == ConnectionState.waiting) {
-  //           return const SizedBox(
-  //             height: 30,
-  //             width: 30,
-  //             child: CircularProgressIndicator(),
-  //           );
-  //         } else if (snapshot.connectionState == ConnectionState.done) {
-  //           if (snapshot.hasData) {
-  //             return Image.network(
-  //               snapshot.data!,
-  //               fit: BoxFit.cover,
-  //               errorBuilder: (context, obj, stack) {
-  //                 return const Center(
-  //                   child: Icon(Icons.image_not_supported),
-  //                 );
-  //               },
-  //             );
-  //           } else {
-  //             return Container();
-  //           }
-  //         } else {
-  //           return Container();
-  //         }
-  //       },
-  //     ),
-  //   );
-  // }
 
   Future<String> fetchImage(String name) async {
     final breedRepo = BreedRepository();
