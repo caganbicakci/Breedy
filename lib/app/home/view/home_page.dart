@@ -1,6 +1,6 @@
 import 'package:breedy/app/bloc/app_bloc.dart';
 import 'package:breedy/app/home/bloc/home_bloc.dart';
-import 'package:breedy/app/home/widgets/custom_card_view.dart';
+import 'package:breedy/app/home/widgets/breed_card_view.dart';
 import 'package:breedy/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -70,7 +70,7 @@ class _HomeViewState extends State<HomeView> {
       ),
       itemCount: state.breeds!.length,
       itemBuilder: (_, index) {
-        return CustomCardView(breed: state.breeds![index]);
+        return BreedCardView(breed: state.breeds![index]);
       },
     );
   }
