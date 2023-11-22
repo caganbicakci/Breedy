@@ -45,7 +45,7 @@ class BreedDetailView extends StatelessWidget {
     return ClipRRect(
       borderRadius: BorderRadius.circular(8),
       child: Image.network(
-        breed.breedImageUrl!,
+        breed.breedImageUrl ?? '',
         fit: BoxFit.cover,
         errorBuilder: (context, obj, stack) {
           return const Center(

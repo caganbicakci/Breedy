@@ -84,10 +84,6 @@ class BreedRandomImageDialog extends StatelessWidget {
 
   Future<String> fetchImage(String name) async {
     final result = await _breedRepository.getBreedImage(name);
-    if (result != null) {
-      return result.message;
-    } else {
-      return breed.breedImageUrl!;
-    }
+    return result;
   }
 }

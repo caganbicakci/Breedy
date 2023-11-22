@@ -1,12 +1,12 @@
 import 'dart:convert';
 import 'package:breedy/domain/models/breed.dart';
-import 'package:breedy/domain/models/breed_image.dart';
 import 'package:breedy/domain/models/breed_list_response.dart';
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 
 class BreedRepository {
-  Future<List<Breed>?> fetchAllBreeds() async {
+  Stream<List<Breed>> fetchAllBreeds() async* {
+    final breedList = <Breed>[];
     try {
       const allBreedsEndpoint = 'https://dog.ceo/api/breeds/list/all';
       final response = await http.get(Uri.parse(allBreedsEndpoint));
@@ -14,37 +14,40 @@ class BreedRepository {
         final data = json.decode(response.body) as Map;
         final breedListResponse = BreedListResponse.fromJson(data);
 
-        final listOfBreeds = breedListResponse.message.entries
-            .map((MapEntry<String, dynamic> entry) {
-          final breedName = entry.key;
-          final subBreeds = List<String>.from(entry.value as List<dynamic>);
-          return Breed(breedName: breedName, subBreeds: subBreeds);
-        }).toList();
-        return listOfBreeds;
-      } else {
-        return null;
+        for (final key in breedListResponse.message.keys) {
+          final breedName = key;
+          final subBreeds = List<String>.from(
+            breedListResponse.message[key] as List<dynamic>,
+          );
+          final breedImageUrl = await getBreedImage(breedName);
+          final breed = Breed(
+            breedName: breedName,
+            subBreeds: subBreeds,
+            breedImageUrl: breedImageUrl,
+          );
+          breedList.add(breed);
+        }
+        yield breedList;
       }
     } catch (exception) {
       Logger().e(exception);
-      return null;
     }
   }
 
-  Future<BreedImage?> getBreedImage(String breedName) async {
+  Future<String> getBreedImage(String breedName) async {
     try {
       final imageEndpoint =
           'https://dog.ceo/api/breed/$breedName/images/random';
       final response = await http.get(Uri.parse(imageEndpoint));
       if (response.statusCode == 200) {
         final imageData = json.decode(response.body);
-        final breedImage = BreedImage.fromJson(imageData);
-        return breedImage;
+        return imageData['message'] as String;
       } else {
-        return null;
+        return 'Na';
       }
     } catch (exception) {
       Logger().e(exception);
-      return null;
+      return 'Na';
     }
   }
 
