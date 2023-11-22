@@ -30,10 +30,7 @@ class BreedDetailView extends StatelessWidget {
       padding: kDefaultPadding,
       decoration: const BoxDecoration(
         color: Colors.black26,
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(8),
-          topRight: Radius.circular(8),
-        ),
+        borderRadius: kBreedTitleBorderRadius,
       ),
       child: Center(
         child: Text(

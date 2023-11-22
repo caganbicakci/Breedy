@@ -1,6 +1,7 @@
 import 'package:breedy/app/bloc/app_bloc.dart';
 import 'package:breedy/app/constants/asset_constants.dart';
 import 'package:breedy/app/constants/theme_constants.dart';
+import 'package:breedy/app/home/bloc/home_bloc.dart';
 import 'package:breedy/app/home/view/home_page.dart';
 import 'package:breedy/app/settings/settings.dart';
 import 'package:breedy/l10n/l10n.dart';
@@ -36,8 +37,11 @@ class _AppState extends State<App> {
                 unselectedItemColor: Colors.black,
               ),
     );
-    return BlocProvider(
-      create: (_) => _appBloc,
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (_) => _appBloc),
+        BlocProvider(create: (context) => HomeBloc()),
+      ],
       child: MaterialApp(
         theme: themeData,
         localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -75,6 +79,9 @@ class _AppState extends State<App> {
 
   Future<dynamic> showSettingsDialog(BuildContext context) {
     return showModalBottomSheet(
+      shape: const RoundedRectangleBorder(
+        borderRadius: kBorderRadiusTopCorners,
+      ),
       showDragHandle: true,
       enableDrag: true,
       useSafeArea: true,
