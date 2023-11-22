@@ -11,21 +11,12 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => HomeBloc(),
-      child: const HomeView(),
-    );
+    return HomeView();
   }
 }
 
-class HomeView extends StatefulWidget {
-  const HomeView({super.key});
-
-  @override
-  State<HomeView> createState() => _HomeViewState();
-}
-
-class _HomeViewState extends State<HomeView> {
+class HomeView extends StatelessWidget {
+  HomeView({super.key});
   final _searchEditingController = TextEditingController();
 
   @override
@@ -71,7 +62,7 @@ class _HomeViewState extends State<HomeView> {
     return Container(
       margin: kHorizontalMargin,
       decoration: BoxDecoration(
-        borderRadius: kDefaultCircularRadius,
+        borderRadius: kPrimaryBorderRadiusAll,
         color: Colors.white,
         border: Border.all(
           width: kSearchBarBorderWidth,
@@ -80,19 +71,92 @@ class _HomeViewState extends State<HomeView> {
       ),
       alignment: Alignment.centerLeft,
       height: kSearchBarHeight,
-      child: TextFormField(
-        controller: _searchEditingController,
-        style: Theme.of(context)
-            .textTheme
-            .bodyMedium!
-            .copyWith(color: Colors.black),
-        decoration: InputDecoration(
-          border: InputBorder.none,
-          hintText: l10n.search,
-          contentPadding: kDefaultPadding,
-          hintStyle: const TextStyle(
-            color: kTextColor,
+      child: BlocBuilder<HomeBloc, HomeState>(
+        builder: (context, state) {
+          return TextFormField(
+            canRequestFocus: false,
+            controller: _searchEditingController,
+            onTap: () => showSearchDialog(context, state),
+            style: Theme.of(context)
+                .textTheme
+                .bodyMedium!
+                .copyWith(color: Colors.black),
+            decoration: InputDecoration(
+              border: InputBorder.none,
+              hintText: context.l10n.search,
+              contentPadding: kDefaultPadding,
+              hintStyle: const TextStyle(
+                color: kTextColor,
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Future<dynamic> showSearchDialog(BuildContext context, HomeState state) {
+    return showModalBottomSheet<void>(
+      shape: const RoundedRectangleBorder(
+        borderRadius: kBorderRadiusTopCorners,
+      ),
+      backgroundColor: kBackgroundColor,
+      isScrollControlled: true,
+      showDragHandle: true,
+      useSafeArea: true,
+      context: context,
+      builder: (context) => GestureDetector(
+        onVerticalDragUpdate: (dragDetail) {
+          final dragDistance = dragDetail.primaryDelta ?? 0;
+          if (dragDistance < 0) {
+            context.read<HomeBloc>().add(SwipeDialogUp());
+          } else {
+            context.read<HomeBloc>().add(SwipeDialogDown());
+          }
+        },
+        child: Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
           ),
+          child: BlocBuilder<HomeBloc, HomeState>(
+            builder: (context, state) {
+              if (state is SearchDialogLarge) {
+                return Column(
+                  children: [
+                    buildSearchField(context),
+                  ],
+                );
+              } else {
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    buildSearchField(context),
+                  ],
+                );
+              }
+            },
+          ),
+        ),
+      ),
+    ).whenComplete(() {
+      FocusManager.instance.primaryFocus!.unfocus();
+      context.read<HomeBloc>().add(SwipeDialogDown());
+    });
+  }
+
+  TextFormField buildSearchField(BuildContext context) {
+    return TextFormField(
+      maxLines: 5,
+      autofocus: true,
+      controller: _searchEditingController,
+      style:
+          Theme.of(context).textTheme.bodyMedium!.copyWith(color: kTextColor),
+      decoration: InputDecoration(
+        border: InputBorder.none,
+        hintText: context.l10n.search,
+        contentPadding: kDefaultPadding,
+        hintStyle: const TextStyle(
+          color: kTextColor,
         ),
       ),
     );
