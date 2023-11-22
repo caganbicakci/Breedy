@@ -79,6 +79,9 @@ class _AppState extends State<App> {
 
   Future<dynamic> showSettingsDialog(BuildContext context) {
     return showModalBottomSheet(
+      shape: const RoundedRectangleBorder(
+        borderRadius: kBorderRadiusTopCorners,
+      ),
       showDragHandle: true,
       enableDrag: true,
       useSafeArea: true,
