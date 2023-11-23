@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:breedy/domain/extension/string_extension.dart';
 import 'package:breedy/domain/models/breed.dart';
 import 'package:breedy/domain/models/breed_list_response.dart';
 import 'package:http/http.dart' as http;
@@ -22,7 +21,7 @@ class BreedRepository {
           );
           final breedImageUrl = await getBreedImageUrl(breedName);
           final breed = Breed(
-            breedName: breedName.capitalize(),
+            breedName: breedName,
             subBreeds: subBreeds,
             breedImageUrl: breedImageUrl,
           );

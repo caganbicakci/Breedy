@@ -1,5 +1,6 @@
 import 'package:breedy/app/constants/theme_constants.dart';
 import 'package:breedy/app/home/widgets/breed_random_image_dialog.dart';
+import 'package:breedy/domain/extension/string_extension.dart';
 import 'package:breedy/domain/models/breed.dart';
 import 'package:breedy/l10n/l10n.dart';
 import 'package:flutter/material.dart';
@@ -99,7 +100,7 @@ class BreedDetailDialog extends StatelessWidget {
                 .copyWith(color: kPrimaryColor),
           ),
           const Divider(color: kDividerColor),
-          Text(breed.breedName),
+          Text(breed.breedName.capitalize()),
         ],
       ),
     );
@@ -126,9 +127,9 @@ class BreedDetailDialog extends StatelessWidget {
                   return Text(context.l10n.none);
                 } else {
                   return ListView(
-                    children: breed.subBreeds!.map((String item) {
+                    children: breed.subBreeds!.map((String subBreed) {
                       return Center(
-                        child: Text(item),
+                        child: Text(subBreed.capitalize()),
                       );
                     }).toList(),
                   );
