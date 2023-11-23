@@ -75,7 +75,7 @@ class BreedDetailDialog extends StatelessWidget {
         topRight: Radius.circular(8),
       ),
       child: Image.network(
-        breed.breedImageUrl!,
+        breed.breedImageUrl ?? '',
         fit: BoxFit.cover,
         errorBuilder: (context, obj, stack) {
           return const Center(
