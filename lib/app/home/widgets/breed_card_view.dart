@@ -1,5 +1,6 @@
 import 'package:breedy/app/constants/theme_constants.dart';
 import 'package:breedy/app/home/widgets/breed_detail_dialog.dart';
+import 'package:breedy/domain/extension/string_extension.dart';
 import 'package:breedy/domain/models/breed.dart';
 import 'package:flutter/material.dart';
 
@@ -34,7 +35,7 @@ class BreedDetailView extends StatelessWidget {
       ),
       child: Center(
         child: Text(
-          breed.breedName,
+          breed.breedName.capitalize(),
           style: const TextStyle(color: Colors.white),
         ),
       ),
