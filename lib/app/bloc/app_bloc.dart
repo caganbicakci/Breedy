@@ -13,7 +13,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     on<BreedsLoadEvent>((event, emit) async {
       emit(BreedsLoading());
       await fetchAllBreeds();
-      final breedList = await _breedFetcher.stream.first;
+      breedList = await _breedFetcher.stream.first;
       emit(BreedsLoaded(breedList));
     });
   }
@@ -30,6 +30,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     _breedFetcher.close();
   }
 
+  List<Breed> breedList = [];
   final _breedFetcher = StreamController<List<Breed>>();
   Stream<List<Breed>> get breedStream => _breedFetcher.stream;
   final _breedRepository = BreedRepository();

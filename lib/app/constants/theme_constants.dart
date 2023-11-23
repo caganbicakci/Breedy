@@ -27,3 +27,5 @@ double kDetailCloseButtonRadius = 16;
 const kGenerateButtonColor = Color(0xff0085FF);
 const kBackgroundColor = Colors.white;
 const kForegroundColor = Colors.black;
+const kDefaultSizedBoxHeight = 32.0;
+const kErrorPageItemMargin = 16.0;

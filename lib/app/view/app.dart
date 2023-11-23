@@ -18,6 +18,7 @@ class App extends StatefulWidget {
 
 class _AppState extends State<App> {
   final AppBloc _appBloc = AppBloc();
+
   @override
   void initState() {
     _appBloc.add(BreedsLoadEvent());
@@ -34,13 +35,13 @@ class _AppState extends State<App> {
       bottomNavigationBarTheme:
           Theme.of(context).bottomNavigationBarTheme.copyWith(
                 selectedItemColor: kPrimaryColor,
-                unselectedItemColor: Colors.black,
+                unselectedItemColor: kForegroundColor,
               ),
     );
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (_) => _appBloc),
-        BlocProvider(create: (context) => HomeBloc()),
+        BlocProvider(create: (_) => HomeBloc(_appBloc)),
       ],
       child: MaterialApp(
         theme: themeData,
@@ -49,11 +50,7 @@ class _AppState extends State<App> {
         home: BlocBuilder<AppBloc, AppState>(
           builder: (context, state) {
             if (state is BreedsLoading) {
-              return Scaffold(
-                body: Center(
-                  child: Image.asset(kLoadingIconPath),
-                ),
-              );
+              return buildLoadingView();
             } else if (state is BreedsLoaded) {
               return Scaffold(
                 appBar: buildAppBar(context.l10n),
@@ -73,6 +70,14 @@ class _AppState extends State<App> {
           },
         ),
         debugShowCheckedModeBanner: false,
+      ),
+    );
+  }
+
+  Scaffold buildLoadingView() {
+    return Scaffold(
+      body: Center(
+        child: Image.asset(kLoadingIconPath),
       ),
     );
   }

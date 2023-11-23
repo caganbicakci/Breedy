@@ -12,3 +12,13 @@ class SearchDialogInitial extends HomeState {}
 class SearchDialogSmall extends HomeState {}
 
 class SearchDialogLarge extends HomeState {}
+
+class BreedSearchSubmitted extends HomeState {
+  BreedSearchSubmitted(this.breedSearchResult);
+  final List<Breed> breedSearchResult;
+
+  @override
+  List<Object?> get props => [];
+}
+
+class BreedSearchNotFound extends HomeState {}
