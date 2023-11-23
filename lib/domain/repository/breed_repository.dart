@@ -19,7 +19,7 @@ class BreedRepository {
           final subBreeds = List<String>.from(
             breedListResponse.message[key] as List<dynamic>,
           );
-          final breedImageUrl = await getBreedImage(breedName);
+          final breedImageUrl = await getBreedImageUrl(breedName);
           final breed = Breed(
             breedName: breedName,
             subBreeds: subBreeds,
@@ -34,7 +34,7 @@ class BreedRepository {
     }
   }
 
-  Future<String> getBreedImage(String breedName) async {
+  Future<String> getBreedImageUrl(String breedName) async {
     try {
       final imageEndpoint =
           'https://dog.ceo/api/breed/$breedName/images/random';
@@ -46,7 +46,6 @@ class BreedRepository {
         return 'Na';
       }
     } catch (exception) {
-      Logger().e(exception);
       return 'Na';
     }
   }
