@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:breedy/domain/models/breed.dart';
 import 'package:breedy/domain/repository/breed_repository.dart';
@@ -10,29 +12,26 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   AppBloc() : super(AppInitial()) {
     on<BreedsLoadEvent>((event, emit) async {
       emit(BreedsLoading());
-      final breedList = await _breedRepository.fetchAllBreeds();
+      await fetchAllBreeds();
+      breedList = await _breedFetcher.stream.first;
+      emit(BreedsLoaded(breedList));
+    });
+  }
 
-      if (breedList != null) {
-        for (final breed in breedList) {
-          final breedImageUrl = await getBreedImage(breed.breedName);
-          if (breedImageUrl != null) {
-            breed.breedImageUrl = breedImageUrl;
-          }
-        }
-        emit(BreedsLoaded(breedList));
+  Future<void> fetchAllBreeds() async {
+    _breedRepository.fetchAllBreeds().listen((value) {
+      if (!_breedFetcher.isClosed) {
+        _breedFetcher.sink.add(value);
       }
     });
   }
 
-  Future<String?> getBreedImage(String breedName) async {
-    final breedImage = await _breedRepository.getBreedImage(breedName);
-    if (breedImage != null) {
-      final imageUrl = breedImage.message;
-      return imageUrl;
-    } else {
-      return null;
-    }
+  void dispose() {
+    _breedFetcher.close();
   }
 
+  List<Breed> breedList = [];
+  final _breedFetcher = StreamController<List<Breed>>();
+  Stream<List<Breed>> get breedStream => _breedFetcher.stream;
   final _breedRepository = BreedRepository();
 }

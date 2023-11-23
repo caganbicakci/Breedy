@@ -1,6 +1,7 @@
 import 'package:breedy/app/bloc/app_bloc.dart';
 import 'package:breedy/app/constants/asset_constants.dart';
 import 'package:breedy/app/constants/theme_constants.dart';
+import 'package:breedy/app/home/bloc/home_bloc.dart';
 import 'package:breedy/app/home/view/home_page.dart';
 import 'package:breedy/app/settings/settings.dart';
 import 'package:breedy/l10n/l10n.dart';
@@ -17,6 +18,7 @@ class App extends StatefulWidget {
 
 class _AppState extends State<App> {
   final AppBloc _appBloc = AppBloc();
+
   @override
   void initState() {
     _appBloc.add(BreedsLoadEvent());
@@ -33,11 +35,14 @@ class _AppState extends State<App> {
       bottomNavigationBarTheme:
           Theme.of(context).bottomNavigationBarTheme.copyWith(
                 selectedItemColor: kPrimaryColor,
-                unselectedItemColor: Colors.black,
+                unselectedItemColor: kForegroundColor,
               ),
     );
-    return BlocProvider(
-      create: (_) => _appBloc,
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (_) => _appBloc),
+        BlocProvider(create: (_) => HomeBloc(_appBloc)),
+      ],
       child: MaterialApp(
         theme: themeData,
         localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -45,11 +50,7 @@ class _AppState extends State<App> {
         home: BlocBuilder<AppBloc, AppState>(
           builder: (context, state) {
             if (state is BreedsLoading) {
-              return Scaffold(
-                body: Center(
-                  child: Image.asset(kLoadingIconPath),
-                ),
-              );
+              return buildLoadingView();
             } else if (state is BreedsLoaded) {
               return Scaffold(
                 appBar: buildAppBar(context.l10n),
@@ -73,8 +74,19 @@ class _AppState extends State<App> {
     );
   }
 
+  Scaffold buildLoadingView() {
+    return Scaffold(
+      body: Center(
+        child: Image.asset(kLoadingIconPath),
+      ),
+    );
+  }
+
   Future<dynamic> showSettingsDialog(BuildContext context) {
     return showModalBottomSheet(
+      shape: const RoundedRectangleBorder(
+        borderRadius: kBorderRadiusTopCorners,
+      ),
       showDragHandle: true,
       enableDrag: true,
       useSafeArea: true,

@@ -17,5 +17,7 @@
     "generate" : "Generate",
     "breed" : "Breed",
     "subBreed" : "Sub Breed",
-    "none" : "No result..."
+    "none" : "No result, try again.",
+    "noResult" : "No results found",
+    "tryAnotherWord" : "Try Searching with antoher word"
 }

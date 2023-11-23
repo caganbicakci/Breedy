@@ -30,10 +30,7 @@ class BreedDetailView extends StatelessWidget {
       padding: kDefaultPadding,
       decoration: const BoxDecoration(
         color: Colors.black26,
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(8),
-          topRight: Radius.circular(8),
-        ),
+        borderRadius: kBreedTitleBorderRadius,
       ),
       child: Center(
         child: Text(
@@ -48,7 +45,7 @@ class BreedDetailView extends StatelessWidget {
     return ClipRRect(
       borderRadius: BorderRadius.circular(8),
       child: Image.network(
-        breed.breedImageUrl!,
+        breed.breedImageUrl ?? '',
         fit: BoxFit.cover,
         errorBuilder: (context, obj, stack) {
           return const Center(
